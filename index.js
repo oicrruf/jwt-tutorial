@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 // const bodyparser = require('body-parser');
+const authRoutes = require('./routes/auth');
+
 require('dotenv').config()
 
 const PORT = process.env.PORT || 3001;
@@ -20,6 +22,8 @@ app.get('/', (req, res) => {
     serverStatus: "ok"
   })
 });
+
+app.use('/api/user', authRoutes);
 
 // iniciar server
 app.listen(PORT, () => {
