@@ -13,6 +13,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // Conexión a Base de datos
+const uri = `mongodb+srv://${process.env.DBUSER}:${process.env.DBPASSWORD}@cluster0.mml2l.mongodb.net/${process.env.DBNAME}?authSource=admin&replicaSet=atlas-fxlrc3-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true`;
+
+mongoose.connect(uri,
+  { useNewUrlParser: true, useUnifiedTopology: true }
+)
+  .then(() => console.log('Base de datos conectada 🤘'))
+  .catch(e => console.log('error db:', e))
 
 // import routes
 
