@@ -12,9 +12,18 @@ router.post('/register', async (req, res) => {
 
   const { error } = schemaRegister.validate(req.body)
 
+  const isEmailExist = await User.findOne({ email: req.body.email });
+
+
   if (error) {
     return res.status(400).json(
       { error: error.details[0].message }
+    )
+  }
+
+  if (isEmailExist) {
+    return res.status(400).json(
+      { error: "El correo electronico ya existe en la base de datos" }
     )
   }
 
