@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const User = require('../models/User');
 const Joi = require('@hapi/joi');
+const bcrypt = require('bcrypt');
 
 const schemaRegister = Joi.object({
   name: Joi.string().min(3).max(255).required(),
@@ -27,10 +28,17 @@ router.post('/register', async (req, res) => {
     )
   }
 
+  // hash contraseña
+  const salt = await bcrypt.genSalt(5);
+  const password = await bcrypt.hash(req.body.password, salt);
+
+  console.log(salt)
+  console.log(password)
+
   const user = new User({
     name: req.body.name,
     email: req.body.email,
-    password: req.body.password
+    password: password
   });
 
   try {
