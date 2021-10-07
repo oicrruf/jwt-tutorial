@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 // const bodyparser = require('body-parser');
 const authRoutes = require('./routes/auth');
+const dashboadRoutes = require('./routes/dashboard');
+const verifyToken = require('./routes/validate-token');
 
 require('dotenv').config()
 
@@ -29,6 +31,8 @@ app.get('/', (req, res) => {
     serverStatus: "ok"
   })
 });
+
+app.use('/api/dashboard', verifyToken, dashboadRoutes);
 
 app.use('/api/user', authRoutes);
 
