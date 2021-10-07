@@ -2,14 +2,15 @@ const router = require('express').Router();
 const User = require('../models/User');
 const Joi = require('@hapi/joi');
 const bcrypt = require('bcrypt');
-
-const schemaRegister = Joi.object({
-  name: Joi.string().min(3).max(255).required(),
-  email: Joi.string().min(6).max(255).required().email(),
-  password: Joi.string().min(8).max(1024).required()
-})
+const jwt = require('jsonwebtoken');
 
 router.post('/register', async (req, res) => {
+
+  const schemaRegister = Joi.object({
+    name: Joi.string().min(3).max(255).required(),
+    email: Joi.string().min(6).max(255).required().email(),
+    password: Joi.string().min(8).max(1024).required()
+  })
 
   const { error } = schemaRegister.validate(req.body)
 
@@ -52,13 +53,14 @@ router.post('/register', async (req, res) => {
   }
 })
 
-const schemaLogin = Joi.object({
-  email: Joi.string().min(6).max(255).required().email(),
-  password: Joi.string().min(8).max(1024).required()
-})
-
 router.post('/login', async (req, res) => {
   // validaciones
+
+  const schemaLogin = Joi.object({
+    email: Joi.string().min(6).max(255).required().email(),
+    password: Joi.string().min(8).max(1024).required()
+  })
+
   const { error } = schemaLogin.validate(req.body);
 
   if (error) return res.status(400).json({ error: error.details[0].message })
@@ -71,10 +73,17 @@ router.post('/login', async (req, res) => {
 
   if (!validPassword) return res.status(400).json({ error: 'contraseña no válida' })
 
-  res.json({
+  const token = jwt.sign({
+    name: user.name,
+    id: user._id, 
+    email: user.email
+  }, process.env.TOKEN_SECRET)
+
+  res.header('auth-token', token).json({
     error: null,
-    data: 'exito bienvenido'
-  })
+    data: {token}
+})
+
 })
 
 
