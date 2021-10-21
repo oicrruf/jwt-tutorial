@@ -4,12 +4,15 @@ const mongoose = require('mongoose');
 const authRoutes = require('./routes/auth');
 const dashboadRoutes = require('./routes/dashboard');
 const verifyToken = require('./routes/validate-token');
+const cors = require('cors')
 
 require('dotenv').config()
+
 
 const PORT = process.env.PORT || 3001;
 const app = express();
 
+app.use(cors())
 // capturar body
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -32,7 +35,7 @@ app.get('/', (req, res) => {
   })
 });
 
-app.use('/api/dashboard', verifyToken, dashboadRoutes);
+app.use('/api/dashboard', verifyToken, dashboadRoutes); // Posee un middleware que valida que haya un usuario logueado
 
 app.use('/api/user', authRoutes);
 

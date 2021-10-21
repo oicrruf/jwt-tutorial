@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 router.post('/register', async (req, res) => {
 
   const schemaRegister = Joi.object({
+    user: Joi.string().min(3).max(255).required(),
     name: Joi.string().min(3).max(255).required(),
     email: Joi.string().min(6).max(255).required().email(),
     password: Joi.string().min(8).max(1024).required()
@@ -37,6 +38,7 @@ router.post('/register', async (req, res) => {
   console.log(password)
 
   const user = new User({
+    user: req.body.name,
     name: req.body.name,
     email: req.body.email,
     password: password
@@ -85,6 +87,20 @@ router.post('/login', async (req, res) => {
   })
 
 })
+
+// route logout
+router.post("/logout", function (req, res) {
+  const authHeader = req.headers["auth-token"];
+
+  console.log(authHeader)
+  jwt.sign(authHeader, "", { expiresIn: 1 }, (logout, err) => {
+    if (logout) {
+      res.send({ msg: 'You have been Logged Out' });
+    } else {
+      res.send({ msg: 'Error' });
+    }
+  });
+});
 
 
 module.exports = router;
